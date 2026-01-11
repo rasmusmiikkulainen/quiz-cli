@@ -1,19 +1,24 @@
 import os
 import time
 import readchar
-allowed_commands = ("create", "play", "quit")
+originPath = os.path.abspath("./")
 
 
 def askCommand():
+    """
+    Display the main menu and process user commands until "quit" is selected.
+    Allows the user to create flashcard sets, play existing ones or quit the program.
+    """
+    allowed_commands = ("create", "play", "quit")
     commandText = "create, play or quit: "
     command = ""
     clearTerminal()
-    print("Welcome to cli-quiz!")
+    print("Welcome to quiz-cli!")
     while command != "quit":
         print("Select command.")
         command = input(commandText)
         while command not in allowed_commands:
-            print("command not found")
+            print("Command not found.")
             command = input(commandText)
         clearTerminal()
         if command == "create":
@@ -25,10 +30,19 @@ def askCommand():
 
 
 def clearTerminal():
+    """
+    Clear the terminal screen.
+    Uses the 'cls' command on Windows and 'clear' on other operating systems.
+    """
     os.system("cls" if os.name == "nt" else "clear")
 
 
 def flashcardCreate():
+    """
+    Create a new flashcard set interactively.
+    Prompts the user for front and back of each card, validates the set name,
+    and saves the file in the flashcards folder.
+    """
     cardNum = 1
     fronts = []
     backs = []
@@ -45,23 +59,26 @@ def flashcardCreate():
         front = input(f"card {cardNum} front: ")
     if len(fronts) != 0:
         setName = input("Enter a name for your flashcard set: ")
-        originPath = os.path.abspath("./")
-        getFolders("./")
+        folders = getFolders("./")
         if "flashcards" not in folders:
             os.mkdir("./flashcards")
-            print("flashcards folder not found, folder created")
         os.chdir("./flashcards")
-        getFiles("./")
-        while f"{setName}.cards" in files or setName.isnumeric():
+        files = getFiles("./")
+        while f"{setName}.cards" in files or setName.isnumeric() or not setName.strip() or len(setName) >= 50:
             if f"{setName}.cards" in files:
                 print(f"You already have a set named {setName}.")
             elif setName.isnumeric():
                 print("Your set name can't be an integer.")
+            elif not setName.strip():
+                print("Your set name can't be empty.")
+            elif len(setName) >= 50:
+                print("Your set name is too long. The maximum is 50 characters.")
             setName = input("Enter another name: ")
         with open(f"{setName}.cards", "a") as file:
             for i in range(len(fronts)):
-                file.write(f"{fronts[i]} / {backs[i]}\n")
-            file.close()
+                file.write(f"{i+1}.\n")
+                file.write(f"front: {fronts[i]}\n")
+                file.write(f"back: {backs[i]}\n")
         clearTerminal()
         print("Here is a list of your flashcards:")
         for i in range(len(fronts)):
@@ -70,118 +87,159 @@ def flashcardCreate():
             print(f"Front: {fronts[i]}")
             print(f"Back: {backs[i]}")
         os.chdir(originPath)
+        print()
+        input("Press enter to continue: ")
 
 
 def getFolders(dir):
-    global folders
-    folders = [f for f in os.listdir(dir) if os.path.isdir("/".join((dir, f)))]
+    """
+    Get a list of folders in a given directory.
+    Args:
+        dir: path to directory
+    Returns:
+        list of the folder names as strings
+    """
+    folders = [f for f in os.listdir(dir) if os.path.isdir(os.path.join(dir, f))]
+    return folders
 
 
 def getFiles(dir):
-    global files
-    files = [f for f in os.listdir(dir) if os.path.isfile("/".join((dir, f)))]
+    """
+    Get a list of files in a given directory.
+    Args:
+        dir: path to directory
+    Returns:
+        list of file names as strings
+    """
+    files = [f for f in os.listdir(dir) if os.path.isfile(os.path.join(dir, f))]
+    return files
 
 
 def flashcardChoose():
-    global originPath
-    originPath = os.path.abspath("./")
-    getFolders("./")
-    if "flashcards" not in folders:
-        print("flashcards folder not found.")
+    """
+    Display numbered list of available flashcards and prompt user to select one.
+    Checks that the selected flashcard set exists and if so, starts the game.
+    """
+    if "flashcards" not in getFolders("./"):
         os.mkdir("./flashcards")
-        print("Folder created.")
     os.chdir("./flashcards")
-    getFiles("./")
     global cards
-    cards = [f for f in files if f[-6:] == ".cards" and os.path.isfile("/".join(("./", f))) and f[:-6].isnumeric() == False]
+    cards = [f for f in getFiles("./") if f[-6:] == ".cards" and f[:-6].isnumeric() == False]
     if len(cards) == 0:
+        os.chdir(originPath)
         print("You have not created any flashcards. You need to create a set first before you can play.")
-        print("Returning to menu in 3 seconds.")
-        time.sleep(3)
+        input("Press enter to continue: ")
     else:
-        askForCards()
-        valids = [i for i in cards if i[:-6] == choose]
+        choose = askForCards()
         while True:
-            if choose.isnumeric():
-                if int(choose) in range(1, len(cards) + 1):
-                    play = int(choose) - 1
-                    break
-            elif len(valids) > 0:
-                for i in range(len(cards)):
-                    if f"{choose}.cards" == cards[i]:
-                        play = i
-                        break
+            if choose.isnumeric() and 1 <= int(choose) <= len(cards):
+                play = int(choose) - 1
+                break
+            elif f"{choose}.cards" in cards:
+                play = cards.index(f"{choose}.cards")
                 break
             print("Flashcard set not found.")
-            askForCards()
+            choose = askForCards()
         flashcardPlay(play)
 
 
 def askForCards():
+    """
+    Display available flashcard sets and prompt the user for selection.
+    Returns:
+        user's choice as string (either the set name or the corresponding number)
+    """
     for i in range(len(cards)):
         print(f"{i + 1}) {cards[i][:-6]}")
     print()
-    global choose
-    choose = input(
-        "Enter the name or number of the flashcard set you want to play: ")
+    choose = input("Enter the name or number of the flashcard set you want to play: ")
+    return choose
 
 
-def flashcardPlay(set):
+def flashcardPlay(cardset):
+    """
+    Play the flashcards of the previously selected set.
+    User can flip the cards, mark them as known/still learning, and replay the set.
+    Args:
+        cardset: index of the selected flashcard set in global cards list
+    """
     fronts = []
-    with open(f"./{cards[set]}") as save:
+    backs = []
+    replay = "restart"
+    with open(f"./{cards[cardset]}") as save:
         for line in save:
-            fronts.append(tuple(line.strip().split(" / ")))
-        save.close()
-    clearTerminal()
-    print("Control the game with your arrow keys.")
-    print("To flip a card, use the up and down keys.")
-    print("To mark the card as known, press the right arrow. To mark it as still learning, press the left arrow.")
-    print()
-    input("Press enter when you are ready to play: ")
-    known = 0
-    stillLearning = 0
-    for i in range(len(fronts)):
+            if line.startswith("front: "):
+                fronts.append(line[7:].strip("\n"))
+            elif line.startswith("back: "):
+                backs.append(line[6:].strip("\n"))
+    playText = "If you want to have the answer side of the card shown first, enter \"reverse\"."
+    while replay == "restart":
         clearTerminal()
-        print(f"{i+1} / {len(fronts)}")
-        print(fronts[i][0])
+        print("Control the flashcards with your arrow keys.")
+        print("To flip a card, use the up and down keys.")
+        print("To mark the card as known, press the right arrow. To mark it as still learning, press the left arrow.")
         print()
-        flipped = False
-        while True:
-            event = readchar.readkey()
+        print(playText)
+        play = input("Otherwise, press enter to play: ")
+        while play not in ("reverse", ""):
+            print("Command not found.")
+            print(playText)
+            play = input("Otherwise, press enter to play: ")
+        if play == "reverse":
+            reverse = True
+        known = 0
+        stillLearning = 0
+        for i in range(len(fronts)):
             clearTerminal()
-            print(f"{i+1} / {len(fronts)}")
-            if event in (readchar.key.UP, readchar.key.DOWN):
-                if flipped:
-                    print(fronts[i][1])
-                    flipped = False
-                else:
-                    print(fronts[i][0])
-                    flipped = True
-                print()
-            elif event == readchar.key.LEFT:
-                stillLearning += 1
-                isknown = False
-                break
-            elif event == readchar.key.RIGHT:
-                known += 1
-                isknown = True
-                break
+            print(f"Card {i+1} / {len(fronts)}")
+            if reverse:
+                flipped = True
+                print(backs[i])
+            else:
+                flipped = False
+                print(fronts[i])
+            print()
+            while True:
+                event = readchar.readkey()
+                clearTerminal()
+                print(f"Card {i+1} / {len(fronts)}")
+                if event in (readchar.key.UP, readchar.key.DOWN):
+                    if flipped:
+                        print(fronts[i])
+                        flipped = False
+                    else:
+                        print(backs[i])
+                        flipped = True
+                    print()
+                elif event == readchar.key.LEFT:
+                    stillLearning += 1
+                    isknown = False
+                    break
+                elif event == readchar.key.RIGHT:
+                    known += 1
+                    isknown = True
+                    break
+            clearTerminal()
+            print(f"{round((i+1)/len(fronts)*100, 2)}% done.")
+            if isknown:
+                print("Known")
+            else:
+                print("Still learning")
+            print()
+            print(f"Known: {known} Still learning: {stillLearning}")
+            print(f"{known} / {i+1} known.")
+            time.sleep(2)
         clearTerminal()
-        if isknown:
-            print("Known")
-        else:
-            print("Still learning")
+        print("Game finished.")
+        print(f"Known: {known}")
+        print(f"Still learning: {stillLearning}")
+        print(f"You knew {round(known/len(fronts)*100, 2)}% of the flashcards.")
         print()
-        print(f"Known: {known} Still learning: {stillLearning}")
-        print(f"{known} / {i+1} known.")
-        time.sleep(2)
+        replay = input("If you want to replay the flashcards, enter \"restart\". Otherwise, press enter to continue: ")
+        while replay not in ["restart", ""]:
+            print("Command not found.")
+            replay = input("If you want to replay the flashcards, enter \"restart\". Otherwise, press enter to continue: ")
     os.chdir(originPath)
-    clearTerminal()
-    print("Game finished.")
-    print(f"Known: {known}")
-    print(f"Still learning: {stillLearning}")
-    print(f"You know {round(known/len(fronts)*100, 2)}% of the flashcards.")
-    input("Press enter to continue: ")
 
 
 askCommand()

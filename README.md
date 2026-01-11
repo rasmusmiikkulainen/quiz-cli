@@ -10,12 +10,21 @@ This program allows the user to:
 - mark cards as "known" or "still learning" as they are playing.
 - view a progress report at the end of their playing session.
 ### Data format
-The created flashcard set is saved to a data text file and is named (user selected name).cards. The file consists of lines, each line containing `front / back`. `front` being the question and `back` being the answer. Both sides of the card are always supplied when creating the flashcard set.
+The created flashcard set is saved to a data text file and is named (user selected name).cards. The file consists of lines, and each flashcard has three of them. The first line contains the flashcard number for ease of editing, the second line contains the question and the third line contains the answer, like so:
+```
+1.
+front: Bonjour
+back: Hello
+2.
+front: Bonsoir
+back: Good evening
+```
+Both the question and the answer are supplied by user input when creating the flashcard set.
 ## Correctness
 ### Typical test case
-Previously created file [french.cards](https://github.com/rasmusmiikkulainen/tree/main/flashcards/frenc.cards) contains 6 flashcards. When the program (file [main.py](https://github.com/rasmusmiikkulainen/blob/main/main.py)) is run, the user selects `play` from the main menu and then inputs `french` when the program asks to pick a flashcard set to play.
+Previously created file [french.cards](https://github.com/rasmusmiikkulainen/tree/main/flashcards/french.cards) contains 6 flashcards. When the program (file [main.py](https://github.com/rasmusmiikkulainen/blob/main/main.py)) is run, the user inputs `play` from the main menu and then inputs `french` or the corresponding number shown when the program asks to pick a flashcard set to play.
 
-The program then goes through all the flashcards in the set by first showing the question side of the flashcard. The user can then flip the card by pressing either their up or down arrow key to reveal the answer. When they are done with the flashcard, they can press the right arrow key to mark it as "known" or the left arrow key to mark it as "still learning". The flashcard does not need to be flipped before this.
+The program then goes through all the flashcards in the set by first showing the question side of the flashcard. The user can then flip the card by pressing either their up or down arrow key to reveal the answer. When they are done with the flashcard, they can press the right arrow key to mark it as "known" or the left arrow key to mark it as "still learning".
 
 When the user has gone through all the flashcards, the program then displays a summary of their progress, including the number of cards marked as "known" and "still learning", as well as the percentage of cards known.
 ```
@@ -27,5 +36,3 @@ Press enter to continue:
 ```
 ### Resource management
 The input data file is opened using a `with`-statement, will therefore be closed automatically when it's no longer used.
-## Additional notes
-I assumed that the "no unnecessary whitespace"-criteria for level 1 only applied to java code, as the provided example contained it.
