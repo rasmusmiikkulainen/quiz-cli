@@ -22,7 +22,7 @@ back: Good evening
 Both the question and the answer are supplied by user input when creating the flashcard set.
 ## Correctness
 ### Typical test case
-Previously created file [french.cards](https://github.com/rasmusmiikkulainen/tree/main/flashcards/french.cards) contains 6 flashcards. When the program (file [main.py](https://github.com/rasmusmiikkulainen/blob/main/main.py)) is run, the user inputs `play` from the main menu and then inputs `french` or the corresponding number shown when the program asks to pick a flashcard set to play.
+Previously created file [french.cards](https://github.com/rasmusmiikkulainen/blob/main/flashcards/french.cards) contains 6 flashcards. When the program (file [main.py](https://github.com/rasmusmiikkulainen/blob/main/main.py)) is run, the user inputs `play` from the main menu and then inputs `french` or the corresponding number shown when the program asks to pick a flashcard set to play.
 
 The program then goes through all the flashcards in the set by first showing the question side of the flashcard. The user can then flip the card by pressing either their up or down arrow key to reveal the answer. When they are done with the flashcard, they can press the right arrow key to mark it as "known" or the left arrow key to mark it as "still learning".
 
