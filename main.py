@@ -166,6 +166,8 @@ def flashcardChoose():
                 # break exits the loop
                 break
             elif f"{choose}.cards" in cards:
+                # .index returns the position (index) of the first matching item in a list
+                # For example ["french", "english"].index("english") returns 1.
                 play = cards.index(f"{choose}.cards")
                 break
             print("Flashcard set not found.")
@@ -263,10 +265,9 @@ def flashcardPlay(cardset):
             else:
                 print("Still learning")
             print()
-            print(f"Known: {known} Still learning: {stillLearning}")
             print(f"{known} / {i+1} known.")
-            # time.sleep() is used to pause the program for a specified amount of seconds, in this case 2.
-            time.sleep(2)
+            # time.sleep() is used to pause the program for a specified amount of seconds, in this case 1.5.
+            time.sleep(1.5)
         clearTerminal()
         print("Game finished.")
         print(f"Known: {known}")
