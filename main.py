@@ -2,6 +2,8 @@ import os
 import time
 # The library readchar is used to register live key inputs from the user.
 import readchar
+# os.path.abspath() returns the full file path
+# Here it is saved to a variable to later return to the main program directory after working in ./flashcards (explained later).
 originPath = os.path.abspath("./")
 
 
@@ -35,11 +37,10 @@ def clearTerminal():
     Clear the terminal screen.
     Uses the 'cls' command on Windows and 'clear' on other operating systems.
     """
-    # os.system allows to execute commands in the system terminal.
-    # os.name returns the name of the operating system dependant module that the os library needs to function properly.
-    # This library essentially decides what kind of commands in the terminal to use when, for example, using the listdir()-function.
-    # In Windows, this command is "dir", but in Linux it's "ls", and python needs to know which one to use.
-    # The most common os.name values are "nt", which is the Windows module, and "posix", which is used in Linux and MacOS.
+    # os.system() allows to execute commands in the system terminal.
+    # os.name returns the name of the operating system type: "nt" for Windows and "posix" for Linux/MacOS.
+    # Different operating systems use different commands to clear the terminal.
+    # Windows uses "cls", while Linux and MacOS use "clear".
     os.system("cls" if os.name == "nt" else "clear")
 
 
@@ -56,6 +57,8 @@ def flashcardCreate():
     print("When you are ready, enter \"/done\" when the program asks for the next flashcard.")
     print()
     front = input(f"card {cardNum} front: ")
+    # .strip() can be used to remove unwanted characters. Without an argument it returns the string with no whitespace.
+    # Here it is used to check if the flashcard is empty or full of spaces. This is possible because an empty string returns False.
     while not front.strip():
         print("The flashcard cannot be empty.")
         front = input(f"card {cardNum} front: ")
@@ -74,11 +77,17 @@ def flashcardCreate():
             front = input(f"card {cardNum} front: ")
     if len(fronts) != 0:
         setName = input("Enter a name for your flashcard set: ")
-        folders = getFolders("./")
+        folders = getFolders("./")      # ./ means the current active directory
         if "flashcards" not in folders:
-            os.mkdir("./flashcards")
-        os.chdir("./flashcards")
+            # os.mkdir() can be used to create folders.
+            # The following creates the folder 'flashcards':
+            os.mkdir("flashcards")
+        # os.chdir() changes the active directory.
+        # This changes the active directory to 'flashcards':
+        os.chdir("flashcards")
         files = getFiles("./")
+        # .isnumeric() returns True if all the characters in the string are integers.
+        # For example, "256".isnumeric() returns True, but "1.32".isnumeric() returns False, because it also contains a point.
         while f"{setName}.cards" in files or setName.isnumeric() or not setName.strip() or len(setName) >= 50:
             if f"{setName}.cards" in files:
                 print(f"You already have a set named {setName}.")
@@ -114,6 +123,9 @@ def getFolders(dir):
     Returns:
         list of the folder names as strings
     """
+    # os.listdir() lists all contents of a specified directory
+    # os.path.isdir() returns True if the specified argument is a directory (folder)
+    # os.path.join() is essentially the same as "/".join((dir, f))
     folders = [f for f in os.listdir(dir) if os.path.isdir(os.path.join(dir, f))]
     return folders
 
@@ -126,6 +138,7 @@ def getFiles(dir):
     Returns:
         list of file names as strings
     """
+    # os.path.isfile() returns True if the specified argument is a file
     files = [f for f in os.listdir(dir) if os.path.isfile(os.path.join(dir, f))]
     return files
 
@@ -136,9 +149,10 @@ def flashcardChoose():
     Checks that the selected flashcard set exists and if so, starts the game.
     """
     if "flashcards" not in getFolders("./"):
-        os.mkdir("./flashcards")    # This command creates the folder "flashcards".
-    os.chdir("./flashcards")        # The following command then changes the active folder to ./flashcards.
-    global cards                    # The keyword global here is used to make the cards variable accessible globally, not just inside this function.
+        os.mkdir("./flashcards")
+    os.chdir("./flashcards")
+    # The keyword global here is used to make the 'cards'-variable accessible globally, not just inside this function.
+    global cards
     cards = [f for f in getFiles("./") if f[-6:] == ".cards" and f[:-6].isnumeric() == False]
     if len(cards) == 0:
         os.chdir(originPath)
@@ -149,6 +163,7 @@ def flashcardChoose():
         while True:
             if choose.isnumeric() and 1 <= int(choose) <= len(cards):
                 play = int(choose) - 1
+                # break exits the loop
                 break
             elif f"{choose}.cards" in cards:
                 play = cards.index(f"{choose}.cards")
@@ -183,10 +198,11 @@ def flashcardPlay(cardset):
     replay = "restart"
     with open(f"./{cards[cardset]}") as save:
         for line in save:
-            if line.startswith("front: "):      # .startswith() can be used to check whether a string starts with the string inputted inside the parentheses.
-                fronts.append(line[7:-2])
+            # .startswith() returns True if the string before the point starts with the string specified in the argument.
+            if line.startswith("front: "):
+                fronts.append(line[7:-1])
             elif line.startswith("back: "):
-                backs.append(line[6:-2])
+                backs.append(line[6:-1])
     playText = "If you want to have the answer side of the card shown first, enter \"reverse\"."
     while replay == "restart":
         clearTerminal()
@@ -202,6 +218,8 @@ def flashcardPlay(cardset):
             play = input("Otherwise, press enter to play: ")
         if play == "reverse":
             reverse = True
+        else:
+            reverse = False
         known = 0
         stillLearning = 0
         for i in range(len(fronts)):
@@ -215,9 +233,11 @@ def flashcardPlay(cardset):
                 print(fronts[i])
             print()
             while True:
-                event = readchar.readkey()      # readchar.readkey returns the name of the keyboard key pressed
+                # readchar.readkey() returns the name of the keyboard key pressed
+                event = readchar.readkey()
                 clearTerminal()
                 print(f"Card {i+1} / {len(fronts)}")
+                # readchar.key.UP means the up arrow key, readchar.key.DOWN means the down arrow
                 if event in (readchar.key.UP, readchar.key.DOWN):
                     if flipped:
                         print(fronts[i])
@@ -226,10 +246,12 @@ def flashcardPlay(cardset):
                         print(backs[i])
                         flipped = True
                     print()
+                # readchar.key.LEFT means the left arrow key
                 elif event == readchar.key.LEFT:
                     stillLearning += 1
                     isknown = False
                     break
+                # readchar.key.RIGHT means the right arrow key
                 elif event == readchar.key.RIGHT:
                     known += 1
                     isknown = True
@@ -243,7 +265,8 @@ def flashcardPlay(cardset):
             print()
             print(f"Known: {known} Still learning: {stillLearning}")
             print(f"{known} / {i+1} known.")
-            time.sleep(2)   # time.sleep() is used to pause the program for a specified amount of seconds, in this case 2.
+            # time.sleep() is used to pause the program for a specified amount of seconds, in this case 2.
+            time.sleep(2)
         clearTerminal()
         print("Game finished.")
         print(f"Known: {known}")
