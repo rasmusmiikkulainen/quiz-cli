@@ -37,16 +37,16 @@ card X front: /done
 ```
 The program then asks the user to input a name for their newly created flashcard set. When the user inputs a valid name, the flashcard set is saved in `./flashcards`. The program creates this folder if it doesn't already exist. The flashcard set is saved as `(chosen name).cards`.
 
-After returning to the main menu, the user inputs "play". The user is then shown a numbered list of all the `.cards`-files in `./flashcards`. The user can then input either the name or the corresponding number of the flashcard set to select it. After selecting a valid flashcard set, the user is shown instructions on how to play the game. In the input field below the instructions the user can choose to input "reverse" to play the flashcards so that the back side is shown first, or leave it empty to play normally.
+After returning to the main menu, the user inputs "play". The user is then shown a numbered list of all the `.cards`-files in `./flashcards` (in the same directory as [main.py](https://github.com/rasmusmiikkulainen/quiz-cli/blob/main/main.py)). The user can then input either the name or the corresponding number of the flashcard set to select it. After selecting a valid flashcard set, the user is shown instructions on how to play the game. In the input field below the instructions the user can choose to input "reverse" to play the flashcards so that the back side is shown first, or leave it empty to play normally.
 
-The program then goes through all the flashcards in the set by first showing the question side of the flashcard. The user can then flip the card by pressing either their up or down arrow key to reveal the answer. When they are done with the flashcard, they can press the right arrow key to mark it as "known" or the left arrow key to mark it as "still learning". Between each flashcard the program shows a quick report for 2 seconds, which shows the user's progress through the flashcard set in percentages, whether the last card was marked as "known" or "still learning" and the amount of flashcards marked as known out of the amount of flashcards played.
+The program then goes through all the flashcards in the set by first showing the earlier specified side of the flashcard. The user can then flip the card by pressing either their up or down arrow key to reveal the other side. When they are done with the flashcard, they can press the right arrow key to mark it as "known" or the left arrow key to mark it as "still learning". Between each flashcard the program shows a quick report for 2 seconds, which shows the user's progress through the flashcard set in percentages, whether the last card was marked as "known" or "still learning" and the amount of flashcards marked as known out of the amount of flashcards played.
 
 When the user has gone through all the flashcards, the program then displays a complete summary of their progress, including the number of cards marked as "known" and "still learning", as well as the percentage of cards known.
 ```
 Game finished.
 Known: 3
 Still learning: 3
-You know 50.0% of the flashcards.
+You knew 50.0% of the flashcards.
 Press enter to continue: 
 ```
 ### Resource management
