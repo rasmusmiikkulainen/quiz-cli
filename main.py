@@ -202,9 +202,9 @@ def flashcardPlay(cardset):
         for line in save:
             # .startswith() returns True if the string before the point starts with the string specified in the argument.
             if line.startswith("front: "):
-                fronts.append(line[7:-1])
+                fronts.append(line[7:].strip("\n"))
             elif line.startswith("back: "):
-                backs.append(line[6:-1])
+                backs.append(line[6:].strip("\n"))
     playText = "If you want to have the answer side of the card shown first, enter \"reverse\"."
     while replay == "restart":
         clearTerminal()
