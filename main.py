@@ -279,7 +279,7 @@ def flashcardPlay(cardset):
         print(f"You knew {round(known/len(fronts)*100, 2)}% of the flashcards.")
         print()
         replay = input("If you want to replay the flashcards, enter \"restart\". Otherwise, press enter to continue: ")
-        while replay not in ["restart", ""]:
+        while replay not in ("restart", ""):
             print("Command not found.")
             replay = input("If you want to replay the flashcards, enter \"restart\". Otherwise, press enter to continue: ")
     os.chdir(originPath)
