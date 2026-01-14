@@ -10,7 +10,7 @@ This program allows the user to:
 - mark cards as "known" or "still learning" as they are playing.
 - view a progress report at the end of their playing session.
 ### Data format
-The created flashcard set is saved to a data text file and is named (user selected name).cards. The file consists of lines, and each flashcard has three of them. The first line contains the flashcard number for ease of editing, the second line contains the question and the third line contains the answer, like so:
+The created flashcard set is saved to a data text file and is named (user selected name).cards. The file consists of lines, and each flashcard has three of them. The first line contains the flashcard number for ease of editing, the second line contains the front side, and the third line contains the back side of the card, like so:
 ```
 1.
 front: Bonjour
