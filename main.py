@@ -98,6 +98,10 @@ def flashcardCreate():
             elif len(setName) >= 50:
                 print("Your set name is too long. The maximum is 50 characters.")
             setName = input("Enter another name: ")
+        # The open() function has different modes that are specified after the file location
+        # Here "a", or append mode is used. This mode can be used to write new data to a file.
+        # If the file exists, "a" appends the new content at the end of that file.
+        # If not, it creates the file automatically.
         with open(f"{setName}.cards", "a") as file:
             for i in range(len(fronts)):
                 file.write(f"{i+1}.\n")
