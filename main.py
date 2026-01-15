@@ -130,8 +130,7 @@ def getFolders(dir):
     # os.listdir() lists all contents of a specified directory
     # os.path.isdir() returns True if the specified argument is a directory (folder)
     # os.path.join() is essentially the same as "/".join((dir, f))
-    folders = [f for f in os.listdir(dir) if os.path.isdir(os.path.join(dir, f))]
-    return folders
+    return [f for f in os.listdir(dir) if os.path.isdir(os.path.join(dir, f))]
 
 
 def getFiles(dir):
@@ -143,8 +142,7 @@ def getFiles(dir):
         list of file names as strings
     """
     # os.path.isfile() returns True if the specified argument is a file
-    files = [f for f in os.listdir(dir) if os.path.isfile(os.path.join(dir, f))]
-    return files
+    return [f for f in os.listdir(dir) if os.path.isfile(os.path.join(dir, f))]
 
 
 def flashcardChoose():
@@ -188,8 +186,7 @@ def askForCards():
     for i in range(len(cards)):
         print(f"{i + 1}) {cards[i][:-6]}")
     print()
-    choose = input("Enter the name or number of the flashcard set you want to play: ")
-    return choose
+    return input("Enter the name or number of the flashcard set you want to play: ")
 
 
 def flashcardPlay(cardset):
