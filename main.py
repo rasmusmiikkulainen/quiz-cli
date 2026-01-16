@@ -53,30 +53,28 @@ def flashcardCreate():
     cardNum = 1
     fronts = []
     backs = []
-    frontText = f"card {cardNum} front: "
-    backText = f"card {cardNum} back: "
     print("Welcome to the flashcard creator!")
     print("When you are ready, enter \"/done\" when the program asks for the next flashcard.")
     print()
-    front = input(frontText)
+    front = input(f"card {cardNum} front: ")
     # .strip() can be used to remove unwanted characters. Without an argument it returns the string with no whitespace.
     # Here it is used to check if the flashcard is empty or full of spaces. This is possible because an empty string returns False.
     while not front.strip():
         print("The flashcard cannot be empty.")
-        front = input(frontText)
+        front = input(f"card {cardNum} front: ")
     while front != "/done":
         fronts.append(front)
-        back = input(backText)
+        back = input(f"card {cardNum} back: ")
         while not back.strip():
             print("The flashcard cannot be empty.")
-            back = input(backText)
+            back = input(f"card {cardNum} back: ")
         backs.append(back)
         cardNum += 1
         print()
-        front = input(frontText)
+        front = input(f"card {cardNum} front: ")
         while not front.strip():
             print("The flashcard cannot be empty.")
-            front = input(frontText)
+            front = input(f"card {cardNum} front: ")
     if len(fronts) != 0:
         setName = input("Enter a name for your flashcard set: ")
         folders = getFolders("./")      # ./ means the current active directory
