@@ -57,8 +57,10 @@ def flashcardCreate():
     print("When you are ready, enter \"/done\" when the program asks for the next flashcard.")
     print()
     front = input(f"card {cardNum} front: ")
-    # .strip() can be used to remove unwanted characters. Without an argument it returns the string with no whitespace.
-    # Here it is used to check if the flashcard is empty or full of spaces. This is possible because an empty string returns False.
+    # .strip() can be used to remove unwanted characters.
+    # By default it returns the string before the dot with no whitespace.
+    # Here it is used to check if the flashcard is empty or full of spaces.
+    # This is possible because an empty string returns False in a conditional.
     while not front.strip():
         print("The flashcard cannot be empty.")
         front = input(f"card {cardNum} front: ")
@@ -87,7 +89,7 @@ def flashcardCreate():
         os.chdir("flashcards")
         files = getFiles("./")
         # .isnumeric() returns True if all the characters in the string are integers.
-        # For example, "256".isnumeric() returns True, but "1.32".isnumeric() returns False, because it also contains a point.
+        # For example, "256".isnumeric() returns True, but "1.32".isnumeric() returns False, because it also contains a dot.
         while f"{setName}.cards" in files or setName.isnumeric() or not setName.strip() or len(setName) >= 50:
             if f"{setName}.cards" in files:
                 print(f"You already have a set named {setName}.")
@@ -100,8 +102,8 @@ def flashcardCreate():
             setName = input("Enter another name: ")
         # The open() function has different modes that are specified after the file location
         # Here "a", or append mode is used. This mode can be used to write new data to a file.
-        # If the file exists, "a" appends the new content at the end of that file.
-        # If not, it creates the file automatically.
+        # If the file exists, "a" adds the new content at the end of that file.
+        # If not, it creates the file automatically and adds the new content there.
         with open(f"{setName}.cards", "a") as file:
             for i in range(len(fronts)):
                 file.write(f"{i+1}.\n")
@@ -128,7 +130,7 @@ def getFolders(dir):
         list of the folder names as strings
     """
     # os.listdir() lists all contents of a specified directory
-    # os.path.isdir() returns True if the specified argument is a directory (folder)
+    # os.path.isdir() returns True if the specified file path in the argument is a directory (folder)
     # os.path.join() is essentially the same as "/".join((dir, f))
     return [f for f in os.listdir(dir) if os.path.isdir(os.path.join(dir, f))]
 
@@ -141,7 +143,7 @@ def getFiles(dir):
     Returns:
         list of file names as strings
     """
-    # os.path.isfile() returns True if the specified argument is a file
+    # os.path.isfile() returns True if the specified file path in the argument is a file
     return [f for f in os.listdir(dir) if os.path.isfile(os.path.join(dir, f))]
 
 
@@ -153,7 +155,9 @@ def flashcardChoose():
     if "flashcards" not in getFolders("./"):
         os.mkdir("./flashcards")
     os.chdir("./flashcards")
-    # The keyword global here is used to make the 'cards'-variable accessible globally, not just inside this function.
+    # By default variables inside a function are not accessible outside it.
+    # The keyword global here is used to make the 'cards'-variable accessible globally.
+    # This means that the cards-variable can be accessed from outside this function as well.
     global cards
     cards = [f for f in getFiles("./") if f[-6:] == ".cards" and f[:-6].isnumeric() == False]
     if len(cards) == 0:
@@ -202,8 +206,11 @@ def flashcardPlay(cardset):
     replay = "restart"
     with open(f"./{cards[cardset]}") as save:
         for line in save:
-            # .startswith() returns True if the string before the point starts with the string specified in the argument.
+            # .startswith() returns True if the string before the dot starts with the string specified in the argument.
+            # for example, "apple is a fruit".startswith("apple") returns True
             if line.startswith("front: "):
+                # .rstrip() returns the string before the dot without trailing whitespace.
+                # for example, "apple\n".rstrip() and "apple  ".rstrip() both return "apple"
                 fronts.append(line[7:].rstrip())
             elif line.startswith("back: "):
                 backs.append(line[6:].rstrip())
